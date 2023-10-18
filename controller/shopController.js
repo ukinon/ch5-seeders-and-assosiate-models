@@ -6,29 +6,17 @@ const createShop = async (req, res, next) => {
     let { name, product } = req.body;
     const userId = req.user.id;
 
-    const productId = await Product.findOne({
-      where: {
-        name: product,
-      },
-    });
-
     const findUserId = await User.findOne({
       where: {
         id: userId,
       },
     });
-    console.log(productId);
-
-    if (!productId) {
-      next(new ApiError("Product doesn't exist", 400));
-    }
 
     if (findUserId.shopId !== null) {
       next(new ApiError("This user already has a shop", 400));
     } else {
       const newShop = await Shop.create({
         name,
-        productId: productId.id,
         include: ["Users"],
       });
       findUserId.update({
@@ -51,7 +39,7 @@ const createShop = async (req, res, next) => {
 const findShops = async (req, res, next) => {
   try {
     const Shops = await Shop.findAll({
-      include: ["Users", "Product"],
+      include: ["Users", "Products"],
     });
 
     res.status(200).json({
@@ -71,7 +59,7 @@ const findShopById = async (req, res, next) => {
       where: {
         id: req.params.id,
       },
-      include: ["Users", "Product"],
+      include: ["Users", "Products"],
     });
 
     if (shop === null) {

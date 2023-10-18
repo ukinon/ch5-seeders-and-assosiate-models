@@ -9,10 +9,17 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Product.hasMany(models.Shop, {
+      Product.belongsTo(models.Shop, {
         foreignKey: {
-          name: "productId",
+          name: "shopId",
           allowNull: true,
+        },
+      });
+
+      Product.belongsTo(models.User, {
+        foreignKey: {
+          name: "userId",
+          allowNull: false,
         },
       });
     }
@@ -35,6 +42,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         defaultValue:
           "https://tse2.mm.bing.net/th?id=OIP.U2iQ7wNK6ZzTW_traW_-PQHaHa&pid=Api&P=0&h=180",
+      },
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      shopId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
       },
     },
     {

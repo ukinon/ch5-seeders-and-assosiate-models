@@ -3,41 +3,41 @@ const imagekit = require("../lib/imagekit");
 const ApiError = require("../utils/apiError");
 
 const createProduct = async (req, res, next) => {
-  const { name, price, stock } = req.body;
-  // validasi untuk check apakah nama produk nya udah ada
-  const product = await Product.findOne({
-    where: {
-      name,
-    },
-  });
-
-  if (product) {
-    next(new ApiError("product name has already been taken", 400));
-  }
-  const file = req.file;
-  let img;
-
   try {
-    if (file) {
-      // dapatkan extension file nya
-      const split = file.originalname.split(".");
-      const extension = split[split.length - 1];
-
-      // upload file ke imagekit
-      const uploadedImage = await imagekit.upload({
-        file: file.buffer,
-        fileName: `IMG-${Date.now()}.${extension}`,
-      });
-      img = uploadedImage.url;
-    }
-
-    const newProduct = await Product.create({
-      name,
-      price,
-      stock,
-      imageUrl: img,
+    const { name, price, stock } = req.body;
+    // validasi untuk check apakah nama produk nya udah ada
+    const product = await Product.findOne({
+      where: {
+        name,
+      },
     });
+    if (product) {
+      next(new ApiError("product name has already been taken", 400));
+    } else {
+      const file = req.file;
+      let img;
+      if (file) {
+        // dapatkan extension file nya
+        const split = file.originalname.split(".");
+        const extension = split[split.length - 1];
 
+        // upload file ke imagekit
+        const uploadedImage = await imagekit.upload({
+          file: file.buffer,
+          fileName: `IMG-${Date.now()}.${extension}`,
+        });
+        img = uploadedImage.url;
+      }
+
+      const newProduct = await Product.create({
+        name,
+        price,
+        stock,
+        imageUrl: img,
+        userId: req.user.id,
+        shopId: req.user.shopId,
+      });
+    }
     res.status(200).json({
       status: "Success",
       data: {
@@ -52,7 +52,7 @@ const createProduct = async (req, res, next) => {
 const findProducts = async (req, res, next) => {
   try {
     const products = await Product.findAll({
-      include: ["Shops"],
+      include: ["Shop"],
     });
 
     res.status(200).json({
@@ -72,7 +72,7 @@ const findProductById = async (req, res, next) => {
       where: {
         id: req.params.id,
       },
-      include: ["Shops"],
+      include: ["Shop"],
     });
 
     if (product === null) {

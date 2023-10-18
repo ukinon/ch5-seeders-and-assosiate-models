@@ -15,9 +15,9 @@ module.exports = (sequelize, DataTypes) => {
           allowNull: false,
         },
       });
-      Shop.belongsTo(models.Product, {
+      Shop.hasMany(models.Product, {
         foreignKey: {
-          name: "productId",
+          name: "shopId",
           allowNull: false,
         },
       });
@@ -27,10 +27,6 @@ module.exports = (sequelize, DataTypes) => {
     {
       name: {
         type: DataTypes.STRING,
-        allowNull: false,
-      },
-      productId: {
-        type: DataTypes.INTEGER,
         allowNull: false,
       },
     },

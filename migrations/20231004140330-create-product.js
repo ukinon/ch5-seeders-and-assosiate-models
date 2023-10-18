@@ -21,6 +21,9 @@ module.exports = {
       userId: {
         type: Sequelize.INTEGER,
       },
+      shopId: {
+        type: Sequelize.INTEGER,
+      },
       imageUrl: {
         type: Sequelize.TEXT,
         defaultValue:

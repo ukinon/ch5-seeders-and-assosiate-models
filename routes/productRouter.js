@@ -10,12 +10,7 @@ const checkRole = require("../middlewares/checkRole");
 const checkOwnership = require("../middlewares/checkOwnership");
 const checkId = require("../middlewares/checkId");
 
-router.post(
-  "/",
-  checkOwnership.checkShopOwner,
-  upload.single("image"),
-  product.createProduct
-);
+router.post("/", autentikasi, upload.single("image"), product.createProduct);
 router.get("/", autentikasi, checkRole("Owner"), product.findProducts);
 router.get("/:id", checkId(Product), product.findProductById);
 router.patch(
