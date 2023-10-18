@@ -1,5 +1,7 @@
 const { Shop, Product, User } = require("../models");
 const ApiError = require("../utils/apiError");
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 
 const createShop = async (req, res, next) => {
   try {
@@ -41,7 +43,7 @@ const findShops = async (req, res, next) => {
     const { name } = req.query;
     const condition = {};
     if (name) {
-      condition.name = name;
+      condition.name = { [Op.like]: "%" + name + "%" };
     }
     const Shops = await Shop.findAll({
       where: condition,
