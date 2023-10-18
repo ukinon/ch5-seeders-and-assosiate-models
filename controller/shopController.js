@@ -38,7 +38,13 @@ const createShop = async (req, res, next) => {
 
 const findShops = async (req, res, next) => {
   try {
+    const { name } = req.query;
+    const condition = {};
+    if (name) {
+      condition.name = name;
+    }
     const Shops = await Shop.findAll({
+      where: condition,
       include: ["Users", "Products"],
     });
 
